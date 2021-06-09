@@ -2,7 +2,7 @@ defmodule FleetMgmt.Package do
 
   alias FleetMgmt.{Coupon}
 
-  @enforce_keys [:packageID, :distance, :weight]
+  #Package Struct
   defstruct packageID: "", distance: nil, weight: nil, total_cost: nil, discount: nil, time: nil
 
   def format_output(out_val) do

@@ -24,6 +24,7 @@ defmodule FleetMgmt do
     |> Package.format_output()
   end
 
+  #This method is used to parse the coupons stored in JSON file
   defp readFile(args) do
     options = [switches: [coupons: :string],aliases: [c: :coupons]]
     {opts,_,_}= OptionParser.parse(args, options)
@@ -31,6 +32,7 @@ defmodule FleetMgmt do
     File.read!(opts[:coupons])
   end
 
+  #To read the data line by line until an empty line is read from console
   defp read(n), do: IO.stream(:stdio, :line) |> Stream.take_while(& &1 != "\n") |> Enum.take(n+1)
 
 end

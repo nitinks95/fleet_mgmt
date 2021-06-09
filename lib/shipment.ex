@@ -1,5 +1,6 @@
 defmodule FleetMgmt.Shipment do
 
+  #Shipment Struct
   defstruct shipment_no: nil, vehicle: nil, packages: nil, max_time: nil, is_returned: false
 
   def get_time_taken(packages, [vehicles, speed, weight]) do
@@ -8,9 +9,9 @@ defmodule FleetMgmt.Shipment do
     {max_weight, _ } = Integer.parse(weight)
 
     packages
-    |> sort_packages(max_weight)
-    |> create_shipment()
-    |> calculate_time(fleet_list, max_speed)
+    |> sort_packages(max_weight)                     # Groups the packages based on max_weight and sorts the packages in descending order
+    |> create_shipment()                             # Shipment struct is created to decide the time
+    |> calculate_time(fleet_list, max_speed)         # Time when the shipment is delivered is calculated
     |> Enum.reduce([], fn x, acc -> List.flatten([x.packages | acc]) end)
   end
 
