@@ -3,12 +3,12 @@ defmodule FleetMgmt.Package do
   alias FleetMgmt.{Coupon}
 
   @enforce_keys [:packageID, :distance, :weight]
-  defstruct packageID: "", distance: nil, weight: nil, total_cost: nil, discount: nil
+  defstruct packageID: "", distance: nil, weight: nil, total_cost: nil, discount: nil, time: nil
 
   def format_output(out_val) do
     out_val
     |> Enum.map(fn pkg ->
-      out = pkg.packageID <> " " <> format_val(pkg.discount) <> " " <> format_val(pkg.total_cost - pkg.discount)
+      out = pkg.packageID <> " " <> format_val(pkg.discount) <> " " <> format_val(pkg.total_cost - pkg.discount) <> " " <> format_val(pkg.time)
       IO.puts(out)
       out
     end)
@@ -32,6 +32,13 @@ defmodule FleetMgmt.Package do
     end)
   end
 
+  def format_val(val) do
+    case val*1.00 |> Float.round(2) |> Float.to_string() |> Integer.parse() do
+      {ret, ".0"} -> Integer.to_string(ret)
+      _ -> val*1.00 |> Float.round(2) |> Float.to_string()
+    end
+  end
+
   def get_total(baseVal, distance, weight), do: baseVal + (10 * weight) + (5 * distance)
 
   def get_discount(total, distance, weight, sOfrCode, coupons) do
@@ -42,13 +49,6 @@ defmodule FleetMgmt.Package do
           true -> total * coupon.discount / 100
           false -> 0
         end
-    end
-  end
-
-  defp format_val(val) do
-    case val*1.00 |> Float.round(2) |> Float.to_string() |> Integer.parse() do
-      {ret, ".0"} -> Integer.to_string(ret)
-      _ -> val*1.00 |> Float.round(2) |> Float.to_string()
     end
   end
 

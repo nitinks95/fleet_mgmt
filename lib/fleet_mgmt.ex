@@ -1,6 +1,6 @@
 defmodule FleetMgmt do
 
-  alias FleetMgmt.{Coupon, Package}
+  alias FleetMgmt.{Coupon, Package, Shipment}
 
   def main(args) do
     # Define Coupons
@@ -12,9 +12,15 @@ defmodule FleetMgmt do
     {baseVal, _ } = Integer.parse(sBaseVal)
     {pkgs, _ } = Integer.parse(sPkgs)
 
-    # Read all Package information
-    read(pkgs+1)
+    # Read all Package information and fleet information
+    input = read(pkgs+1)
+    fleet_dtl = input |> Enum.reverse() |> hd() |> String.split([" ", "\n"], trim: true)
+
+    # Calculate total, discount and time taken
+    input
+    |> Enum.take(pkgs)
     |> Package.parse_package(coupons, baseVal)
+    |> Shipment.get_time_taken(fleet_dtl)
     |> Package.format_output()
   end
 
