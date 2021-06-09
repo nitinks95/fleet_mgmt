@@ -24,6 +24,7 @@ Libraries used are:
 * (Optional) Run the test scenarios `mix test`. Navigate to `./test/fleet_mgmt_test.exs`
 * (Optional) Build the project `MIX_ENV=prod mix escript.build`
 * Run `./fleet_mgmt -c "path_to_coupons.json"`
+* Directly extract `release.rar` and Run `./fleet_mgmt -c "path_to_coupons.json"`
 ---
 
 ## Input
