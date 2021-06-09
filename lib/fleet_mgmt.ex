@@ -1,18 +1,17 @@
 defmodule FleetMgmt do
-  @moduledoc """
-  Documentation for `FleetMgmt`.
-  """
 
-  @doc """
-  Hello world.
+  alias FleetMgmt.{Coupon}
 
-  ## Examples
-
-      iex> FleetMgmt.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def main(args) do
+    # Define Coupons
+    _coupons = readFile(args) |> Coupon.get_coupons()
   end
+
+  defp readFile(args) do
+    options = [switches: [coupons: :string],aliases: [c: :coupons]]
+    {opts,_,_}= OptionParser.parse(args, options)
+
+    File.read!(opts[:coupons])
+  end
+
 end
