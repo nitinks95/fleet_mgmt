@@ -1,0 +1,26 @@
+[
+    {
+        "id": "OFR001",
+        "discount": 10,
+        "min_dist": 0,
+        "max_dist": 200,
+        "min_weight": 70,
+        "max_weight": 200
+    },
+    {
+        "id": "OFR002",
+        "discount": 7,
+        "min_dist": 50,
+        "max_dist": 150,
+        "min_weight": 100,
+        "max_weight": 250
+    },
+    {
+        "id": "OFR003",
+        "discount": 5,
+        "min_dist": 50,
+        "max_dist": 250,
+        "min_weight": 10,
+        "max_weight": 150
+    }
+]
