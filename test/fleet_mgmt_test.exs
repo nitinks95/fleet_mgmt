@@ -1,12 +1,13 @@
 defmodule FleetMgmtTest do
   use ExUnit.Case
-  alias FleetMgmt.{Coupon, Package}
+  alias FleetMgmt.{Coupon, Package, Shipment}
   doctest FleetMgmt
 
   @coupons_input "[\n    {\n        \"id\": \"OFR001\",\n        \"discount\": 10,\n        \"min_dist\": 0,\n        \"max_dist\": 200,\n        \"min_weight\": 70,\n        \"max_weight\": 200\n    },\n    {\n        \"id\": \"OFR002\",\n        \"discount\": 7,\n        \"min_dist\": 50,\n        \"max_dist\": 150,\n        \"min_weight\": 100,\n        \"max_weight\": 250\n    }\n]"
   @package_input ["PKG1 5 5 OFR001\n","PKG2 15 5 OFR002\n","PKG3 100 100 OFR002\n"]
   @package_outut ["PKG1 0 175","PKG2 0 275","PKG3 112 1488"]
-
+  @package_time_output ["PKG1 0 175 0.1","PKG2 0 275 2","PKG3 112 1488 0.1"]
+  @fleet_dtls = ["1", "50", "20"]
 
   describe "get_coupons/1" do
 
@@ -111,6 +112,10 @@ defmodule FleetMgmtTest do
 
   test "check scenario 1" do
     assert @package_input |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100) |> Package.format_output() == @package_outut
+  end
+
+  test "check scenario 2" do
+    assert @package_input |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100) |> Shipment.get_time_taken(@fleet_dtl) |> Package.format_output() == @package_outut
   end
 
 end
