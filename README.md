@@ -5,9 +5,10 @@ This is an application to manage the fleet for a small distance courier service 
 ### Design Considerations - 
 
 * **Delivery Cost = Base Delivery Cost + (Package Total weight * 10) + (Distance to Destination * 5)**
-* Input will be a multi-lined command line input where the first line will have `base_delivery_cost` and `no_of_packages` separated by a space character. Following `n` lines will have package details in order of `pkg_id1`, `weight1_in_kg`, `distance1_in_km` and `offer_ode` separated by space character.
+* Input will be a multi-lined command line input where the first line will have `base_delivery_cost` and `no_of_packages` separated by a space character. Following `n` lines will have package details in order of `pkg_id1`, `weight1_in_kg`, `distance1_in_km` and `offer_ode` separated by space character and the last line will have the `no_of_vehicles` in fleet, `max_speed` and `max_carriable_weight` as well separated by space character.
 * The available coupons will be defined in the JSON file and should be placed in the root directory. The format of JSON file is shown below and if the distance is in the limits of minimum and maximum range specified in the coupon and the weight of the package to which coupon is applied for is in the range of minimum and maximum weight mentioned in the coupon, then the coupon will be eligible for discount else Discount price will be zero. 
 * And finally, **Total Cost = Delivery Cost - (Discount * Delivery Cost / 100)**
+* Calculate the total time Taken for every shipment to be delivered.
 
 ---
 
@@ -31,9 +32,10 @@ Libraries used are:
 
 ### Input structure: 
 ```
-base_delivery_cost no_of_packges
+base_delivery_cost no_of_packages
 pkg_id1 pkg_weight1_in_kg distance1_in_km offer_code1
 ...
+no_of_vehicles max_speed max_carriable_weight
 ```
 ### Example
 ```
@@ -41,6 +43,7 @@ pkg_id1 pkg_weight1_in_kg distance1_in_km offer_code1
 PKG1 5 5 OFR001
 PKG2 15 5 OFR002
 PKG3 10 100 OFR003
+1 50 20
 ```
 ---
 
@@ -48,14 +51,14 @@ PKG3 10 100 OFR003
 
 ### Output structure: 
 ```
-pkg_id1 discount1 total_cost1
+pkg_id1 discount1 total_cost1 estimated_delivery_time1_in_hours
 ...
 ```
 ### Example
 ```
-PKG1 0 175
-PKG2 0 275
-PKG 35 665
+PKG1 0 175 0.1
+PKG2 0 275 2
+PKG 35 665 0.1
 ```
 ---
 ## Coupon Structure
