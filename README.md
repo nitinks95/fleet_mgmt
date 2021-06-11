@@ -21,11 +21,25 @@ Libraries used are:
 ---
 ## Usage
 
+### Dev-
 * Clone the repository
-* (Optional) Run the test scenarios `mix test`. Navigate to `./test/fleet_mgmt_test.exs`
-* (Optional) Build the project `MIX_ENV=prod mix escript.build`
+* Run the test scenarios `mix test`. Navigate to `./test/fleet_mgmt_test.exs`
+* Run `mix coveralls` to get overall summary and coverage of test cases
+* Build the project `MIX_ENV=prod mix escript.build`
 * Run `./fleet_mgmt -c "path_to_coupons.json"`
-* Directly extract `release.rar` and Run `./fleet_mgmt -c "path_to_coupons.json"`
+
+### Realtime-
+* Clone the repository to local
+  ![](img/clone.PNG "Local Repo")
+
+* execute `make build`
+  ![](img/make_build.PNG "make build command")
+
+* execute `make run` and provide a same input
+  ![](img/make_run.PNG "make run command")
+
+* And output should be as follows - 
+  ![](img/output.PNG "output")
 ---
 
 ## Input
@@ -57,20 +71,20 @@ pkg_id1 discount1 total_cost1 estimated_delivery_time1_in_hours
 ### Example
 ```
 PKG1 0 175 0.1
-PKG2 0 275 2
-PKG 35 665 0.1
+PKG2 0 275 0.1
+PKG3 35 665 2
 ```
 ---
 ## Coupon Structure
 ```json
 [
     {
-        "id": String.t(),
-        "discount": Integer.t(),
-        "min_dist": Integer.t(),
-        "max_dist": Integer.t(),
-        "min_weight": Integer.t(),
-        "max_weight": Integer.t()
+        "id": "String.t()",
+        "discount": "Integer.t()",
+        "min_dist": "Integer.t()",
+        "max_dist": "Integer.t()",
+        "min_weight": "Integer.t()",
+        "max_weight": "Integer.t()"
     },...
 ]
 ```
