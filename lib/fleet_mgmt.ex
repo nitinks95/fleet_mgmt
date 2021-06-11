@@ -55,7 +55,7 @@ defmodule FleetMgmt do
           Package.format_val(pkg.discount) <>
           " " <> Package.format_val(pkg.total_cost - pkg.discount) <> " " <> Package.format_val(pkg.time)
       end
-      |> IO.puts()
+      IO.puts(out)
 
       out
     end)

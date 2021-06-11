@@ -3,15 +3,45 @@ defmodule FleetMgmtTest do
   alias FleetMgmt.{Coupon, Package, Shipment}
   doctest FleetMgmt
 
-  @coupons_input "[\n    {\n        \"id\": \"OFR001\",\n        \"discount\": 10,\n        \"min_dist\": 0,\n        \"max_dist\": 200,\n        \"min_weight\": 70,\n        \"max_weight\": 200\n    },\n    {\n        \"id\": \"OFR002\",\n        \"discount\": 7,\n        \"min_dist\": 50,\n        \"max_dist\": 150,\n        \"min_weight\": 100,\n        \"max_weight\": 250\n    }\n]"
-  @package_input ["PKG1 5 5 OFR001\n", "PKG2 15 5 OFR002\n", "PKG3 100 100 OFR002\n"]
-  @package_outut ["PKG1 0 175", "PKG2 0 275", "PKG3 112 1488"]
-  @package_time_output ["PKG1 0 175 0.1", "PKG2 0 275 2", "PKG3 112 1488 0.1"]
-  @fleet_dtls = ["1", "50", "20"]
+  @coupons_input "[\n    {\n        \"id\": \"OFR001\",\n        \"discount\": 10,\n        \"min_dist\": 0,\n        \"max_dist\": 200,\n        \"min_weight\": 70,\n        \"max_weight\": 200\n    },\n    {\n        \"id\": \"OFR002\",\n        \"discount\": 7,\n        \"min_dist\": 50,\n        \"max_dist\": 150,\n        \"min_weight\": 100,\n        \"max_weight\": 250\n    }\n,\n    {\n        \"id\": \"OFR003\",\n        \"discount\": 5,\n        \"min_dist\": 50,\n        \"max_dist\": 250,\n        \"min_weight\": 10,\n        \"max_weight\": 150\n    }\n]"
+
+  @package_input_1 ["PKG1 5 5 OFR001\n", "PKG2 15 5 OFR002\n", "PKG3 10 100 OFR003\n"]
+  @package_outut_1 ["PKG1 0 175", "PKG2 0 275", "PKG3 35 665"]
+  @package_time_output_1 ["PKG1 0 175 0.1", "PKG2 0 275 0.1", "PKG3 35 665 2.2"]
+  @fleet_dtls_1 ["1 50 20\n"]
+
+  @package_input_2 ["PKG1 50 30 OFR001\n", "PKG2 75 125 OFFR0008\n", "PKG3 175 100 OFFR003\n", "PKG4 110 60 OFR002\n", "PKG5 155 95 NA \n"]
+  @package_outut_2 ["PKG1 0 750", "PKG2 0 1475", "PKG3 0 2350", "PKG4 105 1395", "PKG5 0 2125"]
+  @package_time_output_2 ["PKG1 0 750 3.29", "PKG2 0 1475 1.79", "PKG3 0 2350 1.43", "PKG4 105 1395 0.86", "PKG5 0 2125 4.21"]
+  @fleet_dtls_2 ["2 70 200\n"]
+
+  describe "do_problem1/4" do
+    test "Problem1 scenario 1" do
+      assert @package_input_1
+        |> FleetMgmt.do_problem1(3, Coupon.get_coupons(@coupons_input), 100) == @package_outut_1
+    end
+
+    test "Problem1 scenario 2" do
+      assert @package_input_2
+        |> FleetMgmt.do_problem1(5, Coupon.get_coupons(@coupons_input), 100) == @package_outut_2
+    end
+  end
+
+  describe "do_problem2/4" do
+    test "Problem2 scenario 1" do
+      assert @package_input_1 ++ @fleet_dtls_1
+            |> FleetMgmt.do_problem2(3, Coupon.get_coupons(@coupons_input), 100) == @package_time_output_1
+    end
+
+    test "Problem2 scenario 2" do
+      assert @package_input_2 ++ @fleet_dtls_2
+            |> FleetMgmt.do_problem2(5, Coupon.get_coupons(@coupons_input), 100) == @package_time_output_2
+    end
+  end
 
   describe "get_coupons/1" do
-    test "Two coupons added to list" do
-      assert Coupon.get_coupons(@coupons_input) |> length() == 2
+    test "Three coupons added to list" do
+      assert Coupon.get_coupons(@coupons_input) |> length() == 3
     end
 
     test "Validate id of first coupon" do
@@ -62,25 +92,25 @@ defmodule FleetMgmtTest do
 
   describe "parse_package/1" do
     test "validate 3 packages in input" do
-      assert @package_input
+      assert @package_input_1
              |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
              |> length() == 3
     end
 
     test "validate packageID" do
-      assert (@package_input
+      assert (@package_input_1
               |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
               |> hd()).packageID == "PKG1"
     end
 
     test "validate distance" do
-      assert (@package_input
+      assert (@package_input_1
               |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
               |> hd()).distance == 5
     end
 
     test "validate weight" do
-      assert (@package_input
+      assert (@package_input_1
               |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
               |> hd()).weight == 5
     end
@@ -111,16 +141,4 @@ defmodule FleetMgmtTest do
     end
   end
 
-  test "check scenario 1" do
-    assert @package_input
-           |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
-           |> Package.format_output() == @package_outut
-  end
-
-  test "check scenario 2" do
-    assert @package_input
-           |> Package.parse_package(Coupon.get_coupons(@coupons_input), 100)
-           |> Shipment.get_time_taken(@fleet_dtl)
-           |> Package.format_output() == @package_outut
-  end
 end
