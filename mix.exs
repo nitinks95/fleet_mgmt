@@ -8,20 +8,27 @@ defmodule FleetMgmt.MixProject do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       escript: [main_module: FleetMgmt],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       deps: deps()
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-     {:poison, "~> 3.1"}]
+      {:poison, "~> 3.1"},
+      {:excoveralls, "~> 0.14.1"}
+    ]
   end
 end

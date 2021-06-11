@@ -1,53 +1,64 @@
 defmodule FleetMgmt.Shipment do
-
-  #Shipment Struct
+  # Shipment Struct
   defstruct shipment_no: nil, vehicle: nil, packages: nil, max_time: nil, is_returned: false
 
   def get_time_taken(packages, [vehicles, speed, weight]) do
     fleet_list = get_fleet_list(vehicles)
-    {max_speed, _ } = Integer.parse(speed)
-    {max_weight, _ } = Integer.parse(weight)
+    {max_speed, _} = Integer.parse(speed)
+    {max_weight, _} = Integer.parse(weight)
 
     packages
-    |> sort_packages(max_weight)                     # Groups the packages based on max_weight and sorts the packages in descending order
-    |> create_shipment()                             # Shipment struct is created to decide the time
-    |> calculate_time(fleet_list, max_speed)         # Time when the shipment is delivered is calculated
+    # Groups the packages based on max_weight and sorts the packages in descending order
+    |> sort_packages(max_weight)
+    # Shipment struct is created to decide the time
+    |> create_shipment()
+    # Time when the shipment is delivered is calculated
+    |> calculate_time(fleet_list, max_speed)
     |> Enum.reduce([], fn x, acc -> List.flatten([x.packages | acc]) end)
   end
 
   def calculate_time(shipments, fleet_list, max_speed) do
-    %{shipments: ship_list} = shipments
-    |> Enum.reduce(%{fleet: fleet_list, shipments: []}, fn shipment, acc ->
-      if length(acc.fleet)>0 do
-        fleet_list = acc.fleet
-        _ =  Map.put(acc, :fleet, tl(fleet_list))
+    %{shipments: ship_list} =
+      shipments
+      |> Enum.reduce(%{fleet: fleet_list, shipments: []}, fn shipment, acc ->
+        if length(acc.fleet) > 0 do
+          fleet_list = acc.fleet
+          _ = Map.put(acc, :fleet, tl(fleet_list))
 
-        Map.put(acc, :shipments, [get_updated_shipment(shipment, 0, max_speed, hd(acc.fleet)) | acc.shipments])
-      else
-        ship_list = acc.shipments |> Enum.sort_by(&(&1.max_time), :desc)
+          Map.put(acc, :shipments, [
+            get_updated_shipment(shipment, 0, max_speed, hd(acc.fleet)) | acc.shipments
+          ])
+        else
+          ship_list = acc.shipments |> Enum.sort_by(& &1.max_time, :desc)
 
-        first_ship = ship_list
-        |> Enum.filter(fn x -> !x.is_returned end)
-        |> hd()
-        |> Map.put(:is_returned, true)
+          first_ship =
+            ship_list
+            |> Enum.filter(fn x -> !x.is_returned end)
+            |> hd()
+            |> Map.put(:is_returned, true)
 
-        Map.put(acc, :shipments, [get_updated_shipment(shipment, (first_ship.max_time * 2 ), max_speed, hd(acc.fleet)) | tl(ship_list)])
-      end
-    end)
+          Map.put(acc, :shipments, [
+            get_updated_shipment(shipment, first_ship.max_time * 2, max_speed, hd(acc.fleet))
+            | tl(ship_list)
+          ])
+        end
+      end)
 
     ship_list
   end
 
   def get_updated_shipment(shipment, start_time, max_speed, fleet_number) do
-    pkgs = shipment.packages
-    |> Enum.map(fn package ->
-      package
-      |> Map.put(:time, (package.distance/max_speed) + start_time)
-    end)
+    pkgs =
+      shipment.packages
+      |> Enum.map(fn package ->
+        package
+        |> Map.put(:time, package.distance / max_speed + start_time)
+      end)
 
-    total_time = pkgs
-    |> Enum.max_by(&(&1.time))
-    |> Map.get(:time)
+    total_time =
+      pkgs
+      |> Enum.max_by(& &1.time)
+      |> Map.get(:time)
 
     shipment
     |> Map.put(:packages, pkgs)
@@ -69,7 +80,9 @@ defmodule FleetMgmt.Shipment do
 
   def sort_packages(input, max) do
     chunk_fn = fn element, chunk ->
-      if length(chunk)==0 or ((length(chunk)>0) and ((Enum.reduce(chunk, 0, fn x, acc -> x.weight + acc end) + element.weight) <= max )) do
+      if length(chunk) == 0 or
+           (length(chunk) > 0 and
+              Enum.reduce(chunk, 0, fn x, acc -> x.weight + acc end) + element.weight <= max) do
         {:cont, [element | chunk]}
       else
         {:cont, Enum.reverse(chunk), [element]}
@@ -80,14 +93,13 @@ defmodule FleetMgmt.Shipment do
       acc -> {:cont, Enum.reverse(acc), []}
     end
 
-    Enum.sort_by(input, &(&1.weight), :asc)
+    Enum.sort_by(input, & &1.weight, :asc)
     |> Stream.chunk_while([], chunk_fn, after_fun)
     |> Enum.to_list()
   end
 
   def get_fleet_list(vehicles) do
-    {total, _ } = Integer.parse(vehicles)
+    {total, _} = Integer.parse(vehicles)
     Enum.to_list(1..total)
   end
-
 end

@@ -1,7 +1,11 @@
 defmodule FleetMgmt.Coupon do
-
-  #Coupon Struct
-  defstruct couponid: "", discount: nil, min_dist: nil, max_dist: nil, min_weight: nil, max_weight: nil
+  # Coupon Struct
+  defstruct couponid: "",
+            discount: nil,
+            min_dist: nil,
+            max_dist: nil,
+            min_weight: nil,
+            max_weight: nil
 
   def get_coupons(coupons) do
     coupons
@@ -18,6 +22,8 @@ defmodule FleetMgmt.Coupon do
     end)
   end
 
-  def is_valid_coup(coupon, distance, weight), do: (coupon.min_dist <= distance) and (distance <= coupon.max_dist) and (coupon.min_weight <= weight) and (weight <= coupon.max_weight)
-
+  def is_valid_coup(coupon, distance, weight),
+    do:
+      coupon.min_dist <= distance and distance <= coupon.max_dist and coupon.min_weight <= weight and
+        weight <= coupon.max_weight
 end
