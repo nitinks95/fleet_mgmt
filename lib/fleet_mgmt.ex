@@ -1,6 +1,6 @@
 defmodule FleetMgmt do
 
-  alias FleetMgmt.{Coupon, Package}
+  alias FleetMgmt.{Coupon, Package, Shipment}
 
   def main(args) do
     # Define Coupons
@@ -12,12 +12,19 @@ defmodule FleetMgmt do
     {baseVal, _ } = Integer.parse(sBaseVal)
     {pkgs, _ } = Integer.parse(sPkgs)
 
-    # Read all Package information
-    read(pkgs+1)
+    # Read all Package information and fleet information
+    input = read(pkgs+1)
+    fleet_dtl = input |> Enum.reverse() |> hd() |> String.split([" ", "\n"], trim: true)
+
+    # Calculate total, discount and time taken
+    input
+    |> Enum.take(pkgs)
     |> Package.parse_package(coupons, baseVal)
+    |> Shipment.get_time_taken(fleet_dtl)
     |> Package.format_output()
   end
 
+  #This method is used to parse the coupons stored in JSON file
   defp readFile(args) do
     options = [switches: [coupons: :string],aliases: [c: :coupons]]
     {opts,_,_}= OptionParser.parse(args, options)
@@ -25,6 +32,7 @@ defmodule FleetMgmt do
     File.read!(opts[:coupons])
   end
 
+  #To read the data line by line until an empty line is read from console
   defp read(n), do: IO.stream(:stdio, :line) |> Stream.take_while(& &1 != "\n") |> Enum.take(n+1)
 
 end

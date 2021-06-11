@@ -1,5 +1,6 @@
 defmodule FleetMgmt.Coupon do
 
+  #Coupon Struct
   defstruct couponid: "", discount: nil, min_dist: nil, max_dist: nil, min_weight: nil, max_weight: nil
 
   def get_coupons(coupons) do
