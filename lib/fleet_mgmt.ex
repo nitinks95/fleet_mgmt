@@ -25,7 +25,7 @@ defmodule FleetMgmt do
   def do_problem2(input, pkgs, coupons, baseVal) do
     fleet_dtl = input |> Enum.reverse() |> hd() |> String.split([" ", "\n"], trim: true)
 
-    # Calculate total, discount and time taken
+    # Calculate total, discount and time taken (Problem1 & Problem2)
     input
     |> Enum.take(pkgs)
     |> Package.parse_package(coupons, baseVal)
@@ -34,7 +34,7 @@ defmodule FleetMgmt do
   end
 
   def do_problem1(input, pkgs, coupons, baseVal) do
-    # Calculate total, discount
+    # Calculate total, discount (Problem1 only)
     input
     |> Enum.take(pkgs)
     |> Package.parse_package(coupons, baseVal)

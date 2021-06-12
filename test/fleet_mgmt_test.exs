@@ -12,7 +12,7 @@ defmodule FleetMgmtTest do
 
   @package_input_2 ["PKG1 50 30 OFR001\n", "PKG2 75 125 OFFR0008\n", "PKG3 175 100 OFFR003\n", "PKG4 110 60 OFR002\n", "PKG5 155 95 NA \n"]
   @package_outut_2 ["PKG1 0 750", "PKG2 0 1475", "PKG3 0 2350", "PKG4 105 1395", "PKG5 0 2125"]
-  @package_time_output_2 ["PKG1 0 750 3.29", "PKG2 0 1475 1.79", "PKG3 0 2350 1.43", "PKG4 105 1395 0.86", "PKG5 0 2125 4.21"]
+  @package_time_output_2 ["PKG1 0 750 4", "PKG2 0 1475 1.79", "PKG3 0 2350 1.43", "PKG4 105 1395 0.86", "PKG5 0 2125 4.21"]
   @fleet_dtls_2 ["2 70 200\n"]
 
   describe "do_problem1/4" do
