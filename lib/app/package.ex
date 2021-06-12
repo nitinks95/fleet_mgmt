@@ -29,8 +29,10 @@ defmodule FleetMgmt.Package do
     end
   end
 
+  # Calculate the total cose of the package
   def get_total(baseVal, distance, weight), do: baseVal + 10 * weight + 5 * distance
 
+  # Calculate the discount available for package based on coupon code and constraints
   def get_discount(total, distance, weight, sOfrCode, coupons) do
     case Enum.find(coupons, fn x -> x.couponid == sOfrCode end) do
       nil ->

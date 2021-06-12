@@ -8,16 +8,14 @@ defmodule FleetMgmt.Shipment do
     {max_weight, _} = Integer.parse(weight)
 
     packages
-    # Groups the packages based on max_weight and sorts the packages in descending order
     |> sort_packages([], max_weight)
-    # Shipment struct is created to decide the time
     |> create_shipment()
-    # Time when the shipment is delivered is calculated
     |> calculate_time(fleet_list, max_speed)
     |> Enum.reduce([], fn x, acc -> List.flatten([x.packages | acc]) end)
     |> Enum.sort_by(& &1.packageID, :asc)
   end
 
+  # Time when the shipment is delivered is calculated
   def calculate_time(shipments, fleet_list, max_speed) do
     %{shipments: ship_list} =
       shipments
@@ -67,6 +65,7 @@ defmodule FleetMgmt.Shipment do
     |> Map.put(:vehicle, fleet_number)
   end
 
+  # Shipment struct is created to decide the time
   def create_shipment(packages) do
     packages
     |> Enum.with_index(1)
@@ -84,7 +83,7 @@ defmodule FleetMgmt.Shipment do
     Enum.to_list(1..total)
   end
 
-
+  # Groups the packages based on max_weight and sorts the packages in descending order
   def sort_packages([], acc, _max) do
 		acc
 	end
