@@ -28,16 +28,20 @@ defmodule FleetMgmt.Shipment do
             get_updated_shipment(shipment, 0, max_speed, hd(fleet_list)) | acc.shipments
           ])
         else
-          ship_list = acc.shipments |> Enum.sort_by(& &1.max_time, :asc)
+          tmp = acc.shipments |> Enum.sort_by(& &1.max_time, :asc)
+          tmp1 = Enum.filter(tmp, fn x -> x.is_returned end)
 
           first_ship =
-            ship_list
+          tmp
             |> Enum.filter(fn x -> !x.is_returned end)
             |> hd()
             |> Map.put(:is_returned, true)
+          tmp = Enum.filter(tmp, fn x -> !x.is_returned end) |> tl()
+
+          ship_list = List.flatten([first_ship | [tmp1 | tmp]])
 
           Map.put(acc, :shipments, [
-            get_updated_shipment(shipment, first_ship.max_time * 2, max_speed, first_ship.vehicle)
+            get_updated_shipment(shipment, first_ship.max_time, max_speed, first_ship.vehicle)
             | ship_list
           ])
         end
@@ -54,14 +58,16 @@ defmodule FleetMgmt.Shipment do
         |> Map.put(:time, ( package.distance / max_speed ) + start_time)
       end)
 
-    total_time =
+    max_time =
       pkgs
       |> Enum.max_by(& &1.time)
       |> Map.get(:time)
 
+    ret_time = ((max_time - start_time) * 2 ) + start_time
+
     shipment
     |> Map.put(:packages, pkgs)
-    |> Map.put(:max_time, total_time)
+    |> Map.put(:max_time, ret_time)
     |> Map.put(:vehicle, fleet_number)
   end
 
